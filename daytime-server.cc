@@ -122,7 +122,7 @@ processTimeRequest( int fd )
   int n;
 
   // Send prompt
-  const char * prompt = "\nType your name:";
+  const char * prompt = "\nType a string:";
   write( fd, prompt, strlen( prompt ) );
 
   // Currently character read
