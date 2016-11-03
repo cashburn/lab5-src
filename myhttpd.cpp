@@ -137,8 +137,8 @@ processTimeRequest( int fd )
 		( n = read( fd, &newChar, sizeof(newChar) ) ) > 0 ) {
 
 		printf("%d\n", newChar);
-		if ( newChar == '\015' && lastChar[0] == '\012' && 
-			lastChar[1] == '\015' && lastChar[2] == '\012') {
+		if ( newChar == '\012' && lastChar[0] == '\015' && 
+			lastChar[1] == '\012' && lastChar[2] == '\015') {
       // Discard previous <CR> from name
 			//reqLength--;
 			break;
