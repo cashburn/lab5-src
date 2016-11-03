@@ -163,6 +163,8 @@ processTimeRequest( int fd )
 	"Server: cashburn\n"
 	"Vary: Accept-Encoding\n";
 
+	write(fd, header, strlen(header));
+
 	int c;
 	FILE * fp = fopen("http-root-dir/htdocs/index.html", "r");
 	if (fp) {
