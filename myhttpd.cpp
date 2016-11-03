@@ -157,6 +157,12 @@ processTimeRequest( int fd )
 
 	printf("%s\n", req);
 
+	const char * header = "HTTP/1.0 200 OK\n"
+	"Expires: -1\n"
+	"Content-Type: text/html\n"
+	"Server: cashburn\n"
+	"Vary: Accept-Encoding\n";
+
 	int c;
 	FILE * fp = fopen("http-root-dir/htdocs/index.html", "r");
 	if (fp) {
