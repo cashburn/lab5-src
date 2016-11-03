@@ -161,7 +161,7 @@ processTimeRequest( int fd )
 	"Expires: -1\n"
 	"Content-Type: text/html\n"
 	"Server: cashburn\n"
-	"Vary: Accept-Encoding\n";
+	"Vary: Accept-Encoding\n\n";
 
 	write(fd, header, strlen(header));
 
