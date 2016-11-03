@@ -124,8 +124,9 @@ processTimeRequest( int fd )
   // Currently character read
 	unsigned char newChar;
 
-  // Last character read
-	unsigned char lastChar = 0;
+  // Last 3 characters read
+	unsigned char lastChar[3];
+	//unsigned char lastChar = 0;
 
   // The client should send <name><cr><lf>
   // Read the name of the client character by character until a
@@ -135,16 +136,19 @@ processTimeRequest( int fd )
 	while ( reqLength < MaxReq &&
 		( n = read( fd, &newChar, sizeof(newChar) ) ) > 0 ) {
 
-		if ( lastChar == '\015' && newChar == '\012' ) {
+		if ( newChar == '\015' && lastChar[0] == '\012' && 
+			lastChar[1] == '\015' && lastChar[2] == '\012') {
       // Discard previous <CR> from name
-			reqLength--;
+			//reqLength--;
 			break;
 		}
 
 		req[reqLength] = newChar;
 		reqLength++;
 
-		lastChar = newChar;
+		lastChar[2] = lastChar[1];
+		lastChar[1] = lastChar[0];
+		lastChar[0] = newChar;
 	}
 
   // Add null character at the end of the string
