@@ -116,14 +116,10 @@ void
 processTimeRequest( int fd )
 {
   // Buffer used to store the name received from the client
-	const int MaxName = 1024;
-	char name[ MaxName + 1 ];
-	int nameLength = 0;
+	const int MaxReq = 1024;
+	char req[ MaxReq + 1 ];
+	int reqLength = 0;
 	int n;
-
-  // Send prompt
-	const char * prompt = "\nType a string:";
-	write( fd, prompt, strlen( prompt ) );
 
   // Currently character read
 	unsigned char newChar;
@@ -131,31 +127,30 @@ processTimeRequest( int fd )
   // Last character read
 	unsigned char lastChar = 0;
 
-  //
   // The client should send <name><cr><lf>
   // Read the name of the client character by character until a
   // <CR><LF> is found.
   //
 
-	while ( nameLength < MaxName &&
+	while ( reqLength < MaxReq &&
 		( n = read( fd, &newChar, sizeof(newChar) ) ) > 0 ) {
 
 		if ( lastChar == '\015' && newChar == '\012' ) {
       // Discard previous <CR> from name
-			nameLength--;
+			reqLength--;
 			break;
 		}
 
-		name[ nameLength ] = newChar;
-		nameLength++;
+		req[reqLength] = newChar;
+		reqLength++;
 
 		lastChar = newChar;
 	}
 
   // Add null character at the end of the string
-	name[ nameLength ] = 0;
+	req[reqLength] = 0;
 
-	printf( "name=%s\n", name );
+	printf("%s\n", req);
 
 	int c;
 	FILE * fp = fopen("http-root-dir/htdocs/index.html", "r");
