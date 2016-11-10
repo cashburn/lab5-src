@@ -201,6 +201,18 @@ processTimeRequest( int fd )
 		return;
 	}
 
+	//Prevent .. walking
+	char baseExpPath[MAXPATH];
+	realpath("http-root-dir", baseExpPath);
+	size_t baselen = strlen(baseExpPath);
+	size_t pathlen = strlen(path);
+    if (pathlen < baselen || 
+    	strncmp(baseExpPath, path, baselen)) {
+    	write(fd, head404, strlen(head404));
+		write(fd, errorPage, strlen(errorPage));
+		return;
+    } 
+
 	//Find extension
 	char * tmp = path;
 	while (*tmp)
