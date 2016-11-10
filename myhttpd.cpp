@@ -23,6 +23,15 @@ const char * usage =
 "the time of the day.                                          \n"
 "                                                               \n";
 
+const char * successHeader = "HTTP/1.0 200 OK\n"
+"Content-Type: text/html\n"
+"Server: cashburn\n";
+
+const char * head404 = "HTTP/1.0 404 Not Found\n"
+"Content-Type: text/html\n"
+"Server: cashburn\n";
+
+const char * errorPage = "<!DOCTYPE html><title>Error</title><p><b>Error</b></p>";
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -34,6 +43,7 @@ const char * usage =
 #include <stdio.h>
 #include <time.h>
 
+#define MAXPATH 1024
 
 int QueueLength = 5;
 
@@ -53,7 +63,7 @@ main( int argc, char ** argv )
 	int port = atoi( argv[1] );
 
   // Set the IP address and port for this server
-	struct sockaddr_in serverIPAddress; 
+	struct sockaddr_in serverIPAddress;
 	memset( &serverIPAddress, 0, sizeof(serverIPAddress) );
 	serverIPAddress.sin_family = AF_INET;
 	serverIPAddress.sin_addr.s_addr = INADDR_ANY;
@@ -68,8 +78,8 @@ main( int argc, char ** argv )
 
   // Set socket options to reuse port. Otherwise we will
   // have to wait about 2 minutes before reusing the sae port number
-	int optval = 1; 
-	int err = setsockopt(masterSocket, SOL_SOCKET, SO_REUSEADDR, 
+	int optval = 1;
+	int err = setsockopt(masterSocket, SOL_SOCKET, SO_REUSEADDR,
 		(char *) &optval, sizeof( int ) );
 
   // Bind the socket to the IP address and port
@@ -81,7 +91,7 @@ main( int argc, char ** argv )
 		exit( -1 );
 	}
 
-  // Put socket in listening mode and set the 
+  // Put socket in listening mode and set the
   // size of the queue of unprocessed connections
 	error = listen( masterSocket, QueueLength);
 	if ( error ) {
@@ -137,7 +147,7 @@ processTimeRequest( int fd )
 		( n = read( fd, &newChar, sizeof(newChar) ) ) > 0 ) {
 
 		printf("%d\n", newChar);
-		if ( newChar == '\012' && lastChar[0] == '\015' && 
+		if ( newChar == '\012' && lastChar[0] == '\015' &&
 			lastChar[1] == '\012' && lastChar[2] == '\015') {
       // Discard previous <CR> from name
 			//reqLength--;
@@ -156,17 +166,27 @@ processTimeRequest( int fd )
 	req[reqLength] = 0;
 
 	printf("%s\n", req);
+	char * token = strtok(req, " ");
+	if (strcmp(token, "GET")) {
+		write(fd, head404, strlen(head404));
+		write(fd, errorPage, strlen(errorPage));
+		return;
+	}
 
-	const char * header = "HTTP/1.0 200 OK\n"
-	"Expires: -1\n"
-	"Content-Type: text/html\n"
-	"Server: cashburn\n"
-	"Vary: Accept-Encoding\n\n";
+	char * reqFile = strtok(NULL, " ");
 
-	write(fd, header, strlen(header));
+	char * basePath = (char *) "http-root-dir";
+	char relPath[MAXPATH];
+	strcpy(relPath, basePath);
+	strcat(relPath, reqFile);
+	char actualPath[MAXPATH];
+	char * path = realpath(relPath, actualPath);
+	printf("Full Path: %s\n", path);
+	FILE * fp = fopen("http-root-dir/htdocs/index.html", "r");
+
+	write(fd, successHeader, strlen(successHeader));
 
 	int c;
-	FILE * fp = fopen("http-root-dir/htdocs/index.html", "r");
 	if (fp) {
 		while ((c = getc(fp)) != EOF)
 			write(fd, &c, 1);
@@ -176,7 +196,7 @@ processTimeRequest( int fd )
 	//write( fd, name, strlen( name ) );
 	//write( fd, timeIs, strlen( timeIs ) );
 
-  // Send the time of day 
+  // Send the time of day
 	//write(fd, timeString, strlen(timeString));
 
   // Send last newline
