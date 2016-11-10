@@ -176,13 +176,21 @@ processTimeRequest( int fd )
 	char * reqFile = strtok(NULL, " ");
 
 	char * basePath = (char *) "http-root-dir/htdocs";
+	char * path;
 	char relPath[MAXPATH];
+
 	strcpy(relPath, basePath);
 	strcat(relPath, reqFile);
 	printf("%s\n", relPath);
-	char actualPath[MAXPATH];
-	char * path = realpath(relPath, actualPath);
-	printf("Full Path: %s\n", path);
+	if (!strcmp(reqFile, "/")) {
+		strcat(relPath, "index.html");
+		path = strdup(relPath);
+	}
+	else {
+		char actualPath[MAXPATH];
+		path = strdup(realpath(relPath, actualPath));
+		printf("Full Path: %s\n", path);
+	}
 
 	if (!path) {
 		write(fd, head404, strlen(head404));
@@ -190,7 +198,7 @@ processTimeRequest( int fd )
 		return;
 	}
 
-	FILE * fp = fopen("http-root-dir/htdocs/index.html", "r");
+	FILE * fp = fopen(path, "r");
 
 	write(fd, successHeader, strlen(successHeader));
 
