@@ -165,27 +165,6 @@ processTimeRequest( int fd )
   // Add null character at the end of the string
 	req[reqLength] = 0;
 
-	//Find extension
-	char * tmp = &req[reqLength];
-	while (tmp > req && *tmp != '.') {
-		tmp--;
-	}
-
-	char * extension = strdup(tmp);
-	tmp = NULL;
-
-	char * contentType;
-	if (!strcmp(extension, ".html")) {
-		contentType = strdup("text/html");
-	}
-
-	else if (!strcmp(extension, ".gif")) {
-		contentType = strdup("image/gif");
-	}
-
-	else
-		contentType = strdup("text/plain");
-
 	printf("%s\n", req);
 	//Make sure request is GET
 	char * token = strtok(req, " ");
@@ -221,6 +200,30 @@ processTimeRequest( int fd )
 		write(fd, errorPage, strlen(errorPage));
 		return;
 	}
+
+	//Find extension
+	char * tmp = path;
+	while (*tmp)
+		tmp++;
+	while (tmp > path && *tmp != '.') {
+		tmp--;
+	}
+
+	char * extension = strdup(tmp);
+	tmp = NULL;
+
+	//Set Content-Type
+	char * contentType;
+	if (!strcmp(extension, ".html")) {
+		contentType = strdup("text/html");
+	}
+
+	else if (!strcmp(extension, ".gif")) {
+		contentType = strdup("image/gif");
+	}
+
+	else
+		contentType = strdup("text/plain");
 
 	FILE * fp = fopen(path, "r");
 
