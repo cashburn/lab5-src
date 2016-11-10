@@ -187,13 +187,10 @@ processTimeRequest( int fd )
 	//Default document: index.html
 	if (!strcmp(reqFile, "/")) {
 		strcat(relPath, "index.html");
-		path = strdup(relPath);
 	}
-	else {
-		char actualPath[MAXPATH];
-		path = realpath(relPath, actualPath);
-		printf("Full Path: %s\n", path);
-	}
+
+	char actualPath[MAXPATH];
+	path = realpath(relPath, actualPath);
 
 	if (!path) {
 		write(fd, head404, strlen(head404));
