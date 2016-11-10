@@ -146,7 +146,7 @@ processTimeRequest( int fd )
 	while ( reqLength < MaxReq &&
 		( n = read( fd, &newChar, sizeof(newChar) ) ) > 0 ) {
 
-		printf("%d\n", newChar);
+		//printf("%d\n", newChar);
 		if ( newChar == '\012' && lastChar[0] == '\015' &&
 			lastChar[1] == '\012' && lastChar[2] == '\015') {
       // Discard previous <CR> from name
@@ -174,6 +174,7 @@ processTimeRequest( int fd )
 	}
 
 	char * reqFile = strtok(NULL, " ");
+	printf(reqFile);
 
 	char * basePath = (char *) "http-root-dir";
 	char relPath[MAXPATH];
