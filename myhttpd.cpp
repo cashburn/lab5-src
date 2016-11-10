@@ -24,7 +24,6 @@ const char * usage =
 "                                                               \n";
 
 const char * successHeader = "HTTP/1.0 200 OK\n"
-"Content-Type: text/html\n"
 "Server: cashburn\n";
 
 const char * head404 = "HTTP/1.0 404 Not Found\n"
@@ -44,6 +43,7 @@ const char * errorPage = "<!DOCTYPE html><title>Error</title><p><b>Error</b></p>
 #include <time.h>
 
 #define MAXPATH 1024
+#define MAXHEAD 4096
 
 int QueueLength = 5;
 
@@ -165,7 +165,29 @@ processTimeRequest( int fd )
   // Add null character at the end of the string
 	req[reqLength] = 0;
 
+	//Find extension
+	char * tmp = &req[reqLength];
+	while (tmp > req && *tmp != '.') {
+		tmp--;
+	}
+
+	char * extension = strdup(tmp);
+	tmp = NULL;
+
+	char * contentType;
+	if (!strcmp(extension, ".html")) {
+		contentType = strdup("text/html");
+	}
+
+	else if (!strcmp(extension, ".gif")) {
+		contentType = strdup("image/gif");
+	}
+
+	else
+		contentType = strdup("text/plain");
+
 	printf("%s\n", req);
+	//Make sure request is GET
 	char * token = strtok(req, " ");
 	if (strcmp(token, "GET")) {
 		write(fd, head404, strlen(head404));
@@ -173,8 +195,8 @@ processTimeRequest( int fd )
 		return;
 	}
 
+	//reqfile is document requested
 	char * reqFile = strtok(NULL, " ");
-
 	char * basePath = (char *) "http-root-dir/htdocs";
 	char * path;
 	char relPath[MAXPATH];
@@ -182,6 +204,8 @@ processTimeRequest( int fd )
 	strcpy(relPath, basePath);
 	strcat(relPath, reqFile);
 	printf("%s\n", relPath);
+
+	//Default document: index.html
 	if (!strcmp(reqFile, "/")) {
 		strcat(relPath, "index.html");
 		path = strdup(relPath);
@@ -200,7 +224,9 @@ processTimeRequest( int fd )
 
 	FILE * fp = fopen(path, "r");
 
-	write(fd, successHeader, strlen(successHeader));
+	char header[MAXHEAD];
+	sprintf(header, "%sContent-Type: %s\n\n", successHeader, contentType);
+	write(fd, header, strlen(header));
 
 	int c;
 	if (fp) {
@@ -208,12 +234,6 @@ processTimeRequest( int fd )
 			write(fd, &c, 1);
 		fclose(fp);
 	}
-	//write( fd, hi, strlen( hi ) );
-	//write( fd, name, strlen( name ) );
-	//write( fd, timeIs, strlen( timeIs ) );
-
-  // Send the time of day
-	//write(fd, timeString, strlen(timeString));
 
   // Send last newline
 	const char * newline="\n";
