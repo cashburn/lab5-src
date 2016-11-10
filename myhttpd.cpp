@@ -168,6 +168,11 @@ processTimeRequest( int fd )
 	printf("%s\n", req);
 	//Make sure request is GET
 	char * token = strtok(req, " ");
+	if (!token) {
+		write(fd, head404, strlen(head404));
+		write(fd, errorPage, strlen(errorPage));
+		return;
+	}
 	if (strcmp(token, "GET")) {
 		write(fd, head404, strlen(head404));
 		write(fd, errorPage, strlen(errorPage));
