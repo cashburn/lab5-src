@@ -183,6 +183,13 @@ processTimeRequest( int fd )
 	char actualPath[MAXPATH];
 	char * path = realpath(relPath, actualPath);
 	printf("Full Path: %s\n", path);
+
+	if (!path) {
+		write(fd, head404, strlen(head404));
+		write(fd, errorPage, strlen(errorPage));
+		return;
+	}
+
 	FILE * fp = fopen("http-root-dir/htdocs/index.html", "r");
 
 	write(fd, successHeader, strlen(successHeader));
