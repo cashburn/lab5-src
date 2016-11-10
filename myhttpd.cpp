@@ -175,7 +175,7 @@ processTimeRequest( int fd )
 
 	char * reqFile = strtok(NULL, " ");
 
-	char * basePath = (char *) "http-root-dir";
+	char * basePath = (char *) "http-root-dir/htdocs";
 	char relPath[MAXPATH];
 	strcpy(relPath, basePath);
 	strcat(relPath, reqFile);
