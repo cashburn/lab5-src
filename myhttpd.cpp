@@ -188,7 +188,7 @@ processTimeRequest( int fd )
 	}
 	else {
 		char actualPath[MAXPATH];
-		path = strdup(realpath(relPath, actualPath));
+		path = realpath(relPath, actualPath);
 		printf("Full Path: %s\n", path);
 	}
 
