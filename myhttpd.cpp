@@ -174,12 +174,12 @@ processTimeRequest( int fd )
 	}
 
 	char * reqFile = strtok(NULL, " ");
-	printf(reqFile);
 
 	char * basePath = (char *) "http-root-dir";
 	char relPath[MAXPATH];
 	strcpy(relPath, basePath);
 	strcat(relPath, reqFile);
+	printf("%s\n", relPath);
 	char actualPath[MAXPATH];
 	char * path = realpath(relPath, actualPath);
 	printf("Full Path: %s\n", path);
