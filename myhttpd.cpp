@@ -191,6 +191,7 @@ processTimeRequest( int fd )
 
 	char actualPath[MAXPATH];
 	path = realpath(relPath, actualPath);
+	printf("Full Path: %s\n", path);
 
 	if (!path) {
 		write(fd, head404, strlen(head404));
