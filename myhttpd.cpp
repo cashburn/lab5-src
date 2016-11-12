@@ -157,6 +157,7 @@ int main( int argc, char ** argv ) {
 }
 
 void processRequestThread(int socket) {
+	printf("Thread created\n");
 	processRequest(socket);
 	close(socket);
 }
