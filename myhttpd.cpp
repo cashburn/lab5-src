@@ -45,6 +45,8 @@ char * setContentType(char * path);
 
 void sigChldHandler(int sig);
 
+void sigPipeHandler(int sig);
+
 int main( int argc, char ** argv ) {
 	int port;
   	//Print usage if not enough arguments
@@ -55,6 +57,9 @@ int main( int argc, char ** argv ) {
 
 	if (signal(SIGCHLD, sigChldHandler) == SIG_IGN)
 		signal(SIGCHLD, SIG_IGN);
+
+	if (signal(SIGPIPE, sigPipeHandler) == SIG_IGN)
+		signal(SIGPIPE, SIG_IGN);
 
 	if (argc == 2) {
   		//Get the port from the arguments
@@ -298,4 +303,8 @@ char * setContentType(char * path) {
 
 void sigChldHandler(int sig) {
 	int pid = wait3(NULL, WNOHANG, NULL);
+}
+
+void sigPipeHandler(int sig) {
+	perror("PIPE Error");
 }
