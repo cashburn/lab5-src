@@ -38,7 +38,7 @@ char * setContentType(char * path);
 
 int main( int argc, char ** argv ) {
   	//Print usage if not enough arguments
-	if ( argc != 2 ) {
+	if ( argc != 3 ) {
 		fprintf( stderr, "%s", usage );
 		exit( -1 );
 	}
@@ -92,15 +92,22 @@ int main( int argc, char ** argv ) {
 			(struct sockaddr *)&clientIPAddress,
 			(socklen_t*)&alen);
 
-		if ( slaveSocket < 0 ) {
+		if (slaveSocket < 0) {
 			perror( "accept" );
 			exit( -1 );
 		}
+		if (!strcmp(argv[2], "-f")) {
+			int pid;
+			if (!(pid = fork())) {
+				//Process request.
+				processRequest( slaveSocket );
+		    	//Close socket
+				close(slaveSocket);
+				exit(0);
+			}
 
-    	//Process request.
-		processRequest( slaveSocket );
-    	//Close socket
-		close( slaveSocket );
+			close(slaveSocket);
+		}
 	}
 
 }

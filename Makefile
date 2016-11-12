@@ -25,7 +25,7 @@ hello.so: hello.o
 git-commit:
 	git add *.h *.cc >> .local.git.out
 	git commit -a -m "Commit Web Server" >> .local.git.out || echo
-	git push
+	#git push
 
 clean:
 	rm -f *.o use-dlopen hello.so
