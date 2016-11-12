@@ -147,7 +147,7 @@ int main( int argc, char ** argv ) {
 			pthread_t t;
 			pthread_attr_t attr;
 			pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
-
+			printf("Create Thread attempt\n");
 			pthread_create(&t, &attr, (void * (*)(void *)) processRequestThread, (void *) slaveSocket);
 		}
 
