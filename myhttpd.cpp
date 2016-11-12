@@ -18,6 +18,9 @@ const char * errorPage = "<!DOCTYPE html><title>Error</title><p><b>Error</b></p>
 
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <sys/stat.h>
 #include <netinet/in.h>
 #include <netdb.h>
 #include <unistd.h>
@@ -25,6 +28,7 @@ const char * errorPage = "<!DOCTYPE html><title>Error</title><p><b>Error</b></p>
 #include <string.h>
 #include <stdio.h>
 #include <time.h>
+#include <signal.h>
 
 #define MAXPATH 1024
 #define MAXHEAD 4096
@@ -36,12 +40,17 @@ void processRequest(int socket);
 //Content-Type helper function
 char * setContentType(char * path);
 
+void sigChldHandler(int sig);
+
 int main( int argc, char ** argv ) {
   	//Print usage if not enough arguments
-	if ( argc != 3 ) {
+	if ( argc < 2 ) {
 		fprintf( stderr, "%s", usage );
 		exit( -1 );
 	}
+
+	if (signal(SIGCHLD, sigChldHandler) == SIG_IGN)
+		signal(SIGCHLD, SIG_IGN);
 
   	//Get the port from the arguments
 	int port = atoi( argv[1] );
@@ -96,7 +105,15 @@ int main( int argc, char ** argv ) {
 			perror( "accept" );
 			exit( -1 );
 		}
-		if (!strcmp(argv[2], "-f")) {
+
+		if (argc < 3) {
+			//Process request.
+			processRequest( slaveSocket );
+			//Close socket
+			close(slaveSocket);
+		}
+
+		else if (!strcmp(argv[2], "-f")) {
 			int pid;
 			if (!(pid = fork())) {
 				//Process request.
@@ -108,6 +125,21 @@ int main( int argc, char ** argv ) {
 
 			close(slaveSocket);
 		}
+
+		else if (!strcmp(argv[2], "-t")) {
+			int pid;
+			if (!(pid = fork())) {
+				//Process request.
+				processRequest( slaveSocket );
+		    	//Close socket
+				close(slaveSocket);
+				exit(0);
+			}
+
+			close(slaveSocket);
+		}
+
+
 	}
 
 }
@@ -242,4 +274,8 @@ char * setContentType(char * path) {
 		contentType = strdup("text/plain");
 
 	return contentType;
+}
+
+void sigChldHandler(int sig) {
+	int pid = wait3(NULL, WNOHANG, NULL);
 }
