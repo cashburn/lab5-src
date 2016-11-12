@@ -1,6 +1,6 @@
 const char * usage =
 "                                                               \n"
-"   Usage: myhttpd <port>                                       \n"
+"   Usage: myhttpd [-f|-t|-p] <port>                                       \n"
 "                                                               \n"
 "Where 1024 < port < 65536.             						\n"
 "                                                               \n";
@@ -29,22 +29,26 @@ const char * errorPage = "<!DOCTYPE html><title>Error</title><p><b>Error</b></p>
 #include <stdio.h>
 #include <time.h>
 #include <signal.h>
+#include <pthread.h>
 
 #define MAXPATH 1024
 #define MAXHEAD 4096
 
 int QueueLength = 5;
 
-// Processes time request
+// Processes request
 void processRequest(int socket);
+//Thread wrapper
+void processRequestThread(int socket);
 //Content-Type helper function
 char * setContentType(char * path);
 
 void sigChldHandler(int sig);
 
 int main( int argc, char ** argv ) {
+	int port;
   	//Print usage if not enough arguments
-	if ( argc < 2 ) {
+	if ( argc < 2 || argc > 3) {
 		fprintf( stderr, "%s", usage );
 		exit( -1 );
 	}
@@ -52,8 +56,15 @@ int main( int argc, char ** argv ) {
 	if (signal(SIGCHLD, sigChldHandler) == SIG_IGN)
 		signal(SIGCHLD, SIG_IGN);
 
-  	//Get the port from the arguments
-	int port = atoi( argv[1] );
+	if (argc == 2) {
+  		//Get the port from the arguments
+		port = atoi( argv[1] );
+	}
+
+	else if (argc == 3) {
+		//Get the port from the arguments
+		port = atoi(argv[2]);
+	}
 
   	//Set the IP address and port for this server
 	struct sockaddr_in serverIPAddress;
@@ -106,14 +117,14 @@ int main( int argc, char ** argv ) {
 			exit( -1 );
 		}
 
-		if (argc < 3) {
+		if (argc == 2) {
 			//Process request.
 			processRequest( slaveSocket );
 			//Close socket
 			close(slaveSocket);
 		}
 
-		else if (!strcmp(argv[2], "-f")) {
+		else if (!strcmp(argv[1], "-f")) {
 			int pid;
 			if (!(pid = fork())) {
 				//Process request.
@@ -126,22 +137,23 @@ int main( int argc, char ** argv ) {
 			close(slaveSocket);
 		}
 
-		else if (!strcmp(argv[2], "-t")) {
+		else if (!strcmp(argv[1], "-t")) {
 			int pid;
-			if (!(pid = fork())) {
-				//Process request.
-				processRequest( slaveSocket );
-		    	//Close socket
-				close(slaveSocket);
-				exit(0);
-			}
+			pthread_t t;
+			pthread_attr_t attr;
+			pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
 
-			close(slaveSocket);
+			pthread_create(&t, &attr, (void * (*)(void *)) processRequestThread, (void *) slaveSocket);
 		}
 
 
 	}
 
+}
+
+void processRequestThread(int socket) {
+	processRequest(socket);
+	close(socket);
 }
 
 void processRequest(int fd) {
