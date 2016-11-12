@@ -291,6 +291,7 @@ char * setContentType(char * path) {
 	else
 		contentType = strdup("text/plain");
 
+	free(extension);
 	return contentType;
 }
 
