@@ -66,6 +66,11 @@ int main( int argc, char ** argv ) {
 		port = atoi(argv[2]);
 	}
 
+	if (port == 0) {
+		fprintf( stderr, "%s", usage );
+		exit( -1 );
+	}
+
   	//Set the IP address and port for this server
 	struct sockaddr_in serverIPAddress;
 	memset( &serverIPAddress, 0, sizeof(serverIPAddress) );
