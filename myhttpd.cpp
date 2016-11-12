@@ -40,6 +40,8 @@ int QueueLength = 5;
 void processRequest(int socket);
 //Thread wrapper
 void processRequestThread(void * socket);
+
+void poolSlave(void * socket);
 //Content-Type helper function
 char * setContentType(char * path);
 
@@ -113,6 +115,19 @@ int main( int argc, char ** argv ) {
 		exit( -1 );
 	}
 
+	if (argc == 3 && !strcmp(argv[1], "-p")) {
+		pthread_t tid[4];
+		pthread_attr_t attr;
+		pthread_attr_init(&attr);
+		pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
+		for (int i = 0; i < 4; i++) {
+			pthread_create(&tid[i], &attr,
+				(void * (*)(void *)) poolSlave,
+				(void *) (intptr_t) masterSocket);
+		}
+		pthread_join(tid[0], NULL);
+	}
+
 	while ( 1 ) {
 
     	//Accept incoming connections
@@ -157,10 +172,7 @@ int main( int argc, char ** argv ) {
 			pthread_create(&t, &attr,
 				(void * (*)(void *)) processRequestThread, (void *) (intptr_t) slaveSocket);
 		}
-
-
 	}
-
 }
 
 void processRequestThread(void * socket) {
@@ -299,6 +311,24 @@ char * setContentType(char * path) {
 
 	free(extension);
 	return contentType;
+}
+
+void poolSlave(void * masterSocket) {
+	while (1) {
+		//Accept incoming connections
+		struct sockaddr_in clientIPAddress;
+		int alen = sizeof( clientIPAddress );
+		int slaveSocket = accept((intptr_t)masterSocket,
+			(struct sockaddr *)&clientIPAddress,
+			(socklen_t*)&alen);
+
+		if (slaveSocket < 0) {
+			perror( "accept" );
+			exit( -1 );
+		}
+		processRequest((intptr_t) slaveSocket);
+		close((intptr_t) socket);
+	}
 }
 
 void sigChldHandler(int sig) {
