@@ -39,7 +39,7 @@ int QueueLength = 5;
 // Processes request
 void processRequest(int socket);
 //Thread wrapper
-void processRequestThread(int socket);
+void processRequestThread(void * socket);
 //Content-Type helper function
 char * setContentType(char * path);
 
@@ -149,7 +149,7 @@ int main( int argc, char ** argv ) {
 			pthread_attr_init(&attr);
 			pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
 			pthread_create(&t, &attr,
-				(void * (*)(void *)) processRequestThread, (void *) slaveSocket);
+				(void * (*)(void *)) processRequestThread, (void *) (intptr_t) slaveSocket);
 		}
 
 
@@ -157,9 +157,9 @@ int main( int argc, char ** argv ) {
 
 }
 
-void processRequestThread(int socket) {
-	processRequest(socket);
-	close(socket);
+void processRequestThread(void * socket) {
+	processRequest((intptr_t) socket);
+	close((intptr_t) socket);
 }
 
 void processRequest(int fd) {
