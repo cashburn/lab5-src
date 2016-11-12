@@ -148,7 +148,6 @@ int main( int argc, char ** argv ) {
 			pthread_attr_t attr;
 			pthread_attr_init(&attr);
 			pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
-			printf("Create Thread attempt\n");
 			pthread_create(&t, &attr,
 				(void * (*)(void *)) processRequestThread, (void *) slaveSocket);
 		}
@@ -159,7 +158,6 @@ int main( int argc, char ** argv ) {
 }
 
 void processRequestThread(int socket) {
-	printf("Thread created\n");
 	processRequest(socket);
 	close(socket);
 }
@@ -218,7 +216,7 @@ void processRequest(int fd) {
 
 	strcpy(relPath, basePath);
 	strcat(relPath, reqFile);
-	printf("%s\n", relPath);
+	//printf("%s\n", relPath);
 
 	//Default document: index.html
 	if (!strcmp(reqFile, "/")) {
@@ -227,7 +225,7 @@ void processRequest(int fd) {
 
 	char actualPath[MAXPATH];
 	path = realpath(relPath, actualPath);
-	printf("Full Path: %s\n", path);
+	//printf("Full Path: %s\n", path);
 
 	if (!path) {
 		write(fd, errorHeader, strlen(errorHeader));
@@ -254,7 +252,7 @@ void processRequest(int fd) {
 	char header[MAXHEAD];
 	sprintf(header, "%sContent-Type: %s\n\n", successHeader, contentType);
 	write(fd, header, strlen(header));
-
+	free(contentType);
 	int c;
 	if (fp) {
 		while ((c = getc(fp)) != EOF)
