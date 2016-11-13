@@ -332,7 +332,6 @@ void poolSlave(void * masterSocket) {
 		processRequest((intptr_t) slaveSocket);
 		printf("cloce socket\n");
 		close((intptr_t) socket);
-		exit(0);
 	}
 }
 
