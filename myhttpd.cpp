@@ -94,7 +94,7 @@ int main( int argc, char ** argv ) {
 	}
 
   	//Set socket options to reuse port. Otherwise we will
-  	//have to wait about 2 minutes before reusing the sae port number
+  	//have to wait about 2 minutes before reusing the same port number
 	int optval = 1;
 	int err = setsockopt(masterSocket, SOL_SOCKET, SO_REUSEADDR,
 		(char *) &optval, sizeof( int ) );
@@ -337,6 +337,7 @@ void poolSlave(void * masterSocket) {
 		printf("close socket\n");
 		shutdown((intptr_t) socket, 2);
 		close((intptr_t) socket);
+		printf("after close\n");
 	}
 }
 
