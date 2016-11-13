@@ -117,17 +117,18 @@ int main( int argc, char ** argv ) {
 	}
 
 	if (argc == 3 && !strcmp(argv[1], "-p")) {
-		pthread_t tid[4];
+		pthread_t tid[5];
 		pthread_attr_t attr;
 		pthread_mutex_init(&mutex, NULL);
 		pthread_attr_init(&attr);
 		pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 5; i++) {
 			pthread_create(&tid[i], &attr,
 				(void * (*)(void *)) poolSlave,
 				(void *) (intptr_t) masterSocket);
 		}
-		poolSlave((void *)masterSocket);
+		pthread_join(tid[0], NULL);
+		//poolSlave((void *)masterSocket);
 		perror("poolSlave");
 		exit(-1);
 	}
