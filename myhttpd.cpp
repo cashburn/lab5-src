@@ -35,6 +35,7 @@ const char * errorPage = "<!DOCTYPE html><title>Error</title><p><b>Error</b></p>
 #define MAXHEAD 4096
 
 int QueueLength = 5;
+pthread_mutex_t mutex;
 
 // Processes request
 void processRequest(int socket);
@@ -118,6 +119,7 @@ int main( int argc, char ** argv ) {
 	if (argc == 3 && !strcmp(argv[1], "-p")) {
 		pthread_t tid[4];
 		pthread_attr_t attr;
+		pthread_mutex_init(&mutex, NULL);
 		pthread_attr_init(&attr);
 		pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
 		for (int i = 0; i < 4; i++) {
@@ -318,10 +320,11 @@ void poolSlave(void * masterSocket) {
 		//Accept incoming connections
 		struct sockaddr_in clientIPAddress;
 		int alen = sizeof( clientIPAddress );
+		pthread_mutex_lock(&mutex);
 		int slaveSocket = accept((intptr_t)masterSocket,
 			(struct sockaddr *)&clientIPAddress,
 			(socklen_t*)&alen);
-
+		pthread_mutex_unlock(&mutex);
 		if (slaveSocket < 0) {
 			perror( "accept" );
 			exit( -1 );
@@ -329,6 +332,7 @@ void poolSlave(void * masterSocket) {
 		processRequest((intptr_t) slaveSocket);
 		printf("cloce socket\n");
 		close((intptr_t) socket);
+		exit(0);
 	}
 }
 
