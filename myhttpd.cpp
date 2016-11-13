@@ -128,6 +128,7 @@ int main( int argc, char ** argv ) {
 				(void *) (intptr_t) masterSocket);
 			pthread_join(tid[i], NULL);
 		}
+		poolSlave((void *)masterSocket);
 	}
 
 	while ( 1 ) {
