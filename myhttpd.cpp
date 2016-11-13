@@ -126,8 +126,8 @@ int main( int argc, char ** argv ) {
 			pthread_create(&tid[i], &attr,
 				(void * (*)(void *)) poolSlave,
 				(void *) (intptr_t) masterSocket);
+			pthread_join(tid[i], NULL);
 		}
-		pthread_join(tid[0], NULL);
 	}
 
 	while ( 1 ) {
@@ -330,7 +330,7 @@ void poolSlave(void * masterSocket) {
 			exit( -1 );
 		}
 		processRequest((intptr_t) slaveSocket);
-		printf("cloce socket\n");
+		printf("close socket\n");
 		close((intptr_t) socket);
 	}
 }
