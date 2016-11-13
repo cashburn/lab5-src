@@ -319,6 +319,7 @@ char * setContentType(char * path) {
 }
 
 void poolSlave(void * masterSocket) {
+	printf("thread created");
 	while (1) {
 		//Accept incoming connections
 		struct sockaddr_in clientIPAddress;
