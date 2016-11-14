@@ -378,7 +378,7 @@ char * dirListHTML(const char * dirPath) {
 	struct dirent * ent;
 	while ((ent = readdir(dir)) != NULL) {
 		sprintf(html, "%s<tr><td valign=\"top\"><img src=\"/icons/unknown.gif\" "
-		"alt=\"[   ]\"></td><td><a href=\"%s\">%s</a>               </td>"
+		"alt=\"[   ]\"></td><td><a href=\"./%s\">%s</a>               </td>"
 		"<td align=\"right\">2014-11-10 17:53  </td><td align=\"right\">374 </td>"
 		"<td>&nbsp;</td></tr>", html, ent->d_name, ent->d_name);
 	}
