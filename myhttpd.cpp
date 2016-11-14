@@ -53,7 +53,7 @@ void sigPipeHandler(int sig);
 int main( int argc, char ** argv ) {
 	int port;
   	//Print usage if not enough arguments
-	if ( argc < 2 || argc > 3) {
+	if (argc > 3) {
 		fprintf( stderr, "%s", usage );
 		exit( -1 );
 	}
@@ -64,9 +64,13 @@ int main( int argc, char ** argv ) {
 	if (signal(SIGPIPE, sigPipeHandler) == SIG_IGN)
 		signal(SIGPIPE, SIG_IGN);
 
-	if (argc == 2) {
+	if (argc == 1) {
+		port = 4242;
+	}
+
+	else if (argc == 2) {
   		//Get the port from the arguments
-		port = atoi( argv[1] );
+		port = atoi(argv[1]);
 	}
 
 	else if (argc == 3) {
@@ -117,18 +121,18 @@ int main( int argc, char ** argv ) {
 	}
 
 	if (argc == 3 && !strcmp(argv[1], "-p")) {
-		pthread_t tid[5];
+		pthread_t tid[4];
 		pthread_attr_t attr;
 		pthread_mutex_init(&mutex, NULL);
 		pthread_attr_init(&attr);
 		pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 4; i++) {
 			pthread_create(&tid[i], &attr,
 				(void * (*)(void *)) poolSlave,
 				(void *) (intptr_t) masterSocket);
 		}
-		pthread_join(tid[0], NULL);
-		//poolSlave((void *)masterSocket);
+		//pthread_join(tid[0], NULL);
+		poolSlave((void *)masterSocket);
 		perror("poolSlave");
 		exit(-1);
 	}
@@ -147,7 +151,7 @@ int main( int argc, char ** argv ) {
 			exit( -1 );
 		}
 
-		if (argc == 2) {
+		if (argc < 3) {
 			//Process request.
 			processRequest( slaveSocket );
 			//Close socket
@@ -239,7 +243,6 @@ void processRequest(int fd) {
 
 	strcpy(relPath, basePath);
 	strcat(relPath, reqFile);
-	//printf("%s\n", relPath);
 
 	//Default document: index.html
 	if (!strcmp(reqFile, "/")) {
@@ -248,7 +251,6 @@ void processRequest(int fd) {
 
 	char actualPath[MAXPATH];
 	path = realpath(relPath, actualPath);
-	//printf("Full Path: %s\n", path);
 
 	if (!path) {
 		write(fd, errorHeader, strlen(errorHeader));
@@ -319,7 +321,6 @@ char * setContentType(char * path) {
 }
 
 void poolSlave(void * masterSocket) {
-	printf("thread created");
 	while (1) {
 		//Accept incoming connections
 		struct sockaddr_in clientIPAddress;
@@ -334,10 +335,8 @@ void poolSlave(void * masterSocket) {
 			exit( -1 );
 		}
 		processRequest((intptr_t) slaveSocket);
-		printf("close socket\n");
 		shutdown((intptr_t) socket, 0);
 		close((intptr_t) socket);
-		printf("after close\n");
 	}
 }
 
