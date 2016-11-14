@@ -281,19 +281,21 @@ void processRequest(int fd) {
     }
 
 	FILE * fp = fopen(path, "r");
+	char header[MAXHEAD];
+	if (isDirectory(path)) {
+		sprintf(header, "%sContent-Type: %s\n\n", successHeader, "text/html");
+		write(fd, header, strlen(header));
+		char * html = dirListHTML(path);
+		write(fd, html, strlen(html));
+	}
 
 	char * contentType = setContentType(path);
 
-	char header[MAXHEAD];
 	sprintf(header, "%sContent-Type: %s\n\n", successHeader, contentType);
 	write(fd, header, strlen(header));
 	free(contentType);
 
 	int c;
-	if (isDirectory(path)) {
-		char * html = dirListHTML(path);
-		write(fd, html, strlen(html));
-	}
 
 	if (fp) {
 		while ((c = getc(fp)) != EOF)
