@@ -291,6 +291,11 @@ void processRequest(int fd) {
 		sprintf(header, "%sContent-Type: %s\n\n", successHeader, "text/html");
 		write(fd, header, strlen(header));
 		char * html = dirListHTML(path);
+		if (html == NULL) {
+			write(fd, errorHeader, strlen(errorHeader));
+			write(fd, errorPage, strlen(errorPage));
+			return;
+		}
 		write(fd, html, strlen(html));
 	}
 	else {
