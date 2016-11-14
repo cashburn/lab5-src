@@ -412,7 +412,7 @@ char * dirListHTML(const char * dirPath, const char * relPath) {
 			"<img src=\"/icons/index.gif\" alt=\"[   ]\"></td>", html);
 		}
 		struct stat attrib;
-		stat(filePath, &attrib);
+		printf("Stat output:%d\n", stat(filePath, &attrib));
 		sprintf(html, "%s<td><a href=\"%s/%s\">%s</a>               </td>"
 		"<td align=\"right\">%s  </td><td align=\"right\">%s </td>"
 		"<td>&nbsp;</td></tr>", html, relPath, ent->d_name, ent->d_name, ctime(&(&attrib)->st_mtime), (&attrib)->st_size);
