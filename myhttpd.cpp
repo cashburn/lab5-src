@@ -285,7 +285,7 @@ void processRequest(int fd) {
 	if (isDirectory(path)) {
 		sprintf(header, "%sContent-Type: %s\n\n", successHeader, "text/html");
 		write(fd, header, strlen(header));
-		char * html = dirListHTML(path);
+		char * html = dirListHTML(reqFile);
 		write(fd, html, strlen(html));
 	}
 	else {
@@ -400,5 +400,6 @@ void sigChldHandler(int sig) {
 }
 
 void sigPipeHandler(int sig) {
-	perror("PIPE Error");
+	//perror("PIPE Error");
+	return;
 }
