@@ -380,7 +380,7 @@ char * dirListHTML(const char * dirPath, const char * relPath) {
 
 	sprintf(html, "%s<tr><td valign=\"top\">"
  	"<img src=\"/icons/menu.gif\" alt=\"[PARENTDIR]\"></td>", html);
-	sprintf(html, "%s<td><a href=\"../\">Parent Directory</a>               </td>"
+	sprintf(html, "%s<td><a href=\"..\">Parent Directory</a>               </td>"
 	"<td>&nbsp;</td><td align=\"right\"> - </td>"
 	"<td>&nbsp;</td></tr>", html);
 	DIR * dir = opendir(dirPath);
