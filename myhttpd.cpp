@@ -288,19 +288,20 @@ void processRequest(int fd) {
 		char * html = dirListHTML(path);
 		write(fd, html, strlen(html));
 	}
+	else {
+		char * contentType = setContentType(path);
 
-	char * contentType = setContentType(path);
+		sprintf(header, "%sContent-Type: %s\n\n", successHeader, contentType);
+		write(fd, header, strlen(header));
+		free(contentType);
 
-	sprintf(header, "%sContent-Type: %s\n\n", successHeader, contentType);
-	write(fd, header, strlen(header));
-	free(contentType);
+		int c;
 
-	int c;
-
-	if (fp) {
-		while ((c = getc(fp)) != EOF)
-			write(fd, &c, 1);
-		fclose(fp);
+		if (fp) {
+			while ((c = getc(fp)) != EOF)
+				write(fd, &c, 1);
+			fclose(fp);
+		}
 	}
 
   // Send last newline
@@ -361,13 +362,13 @@ void poolSlave(void * masterSocket) {
 char * dirListHTML(const char * dirPath) {
 	char * html = (char *) malloc(16384*sizeof(char));
 	sprintf(html, "<!DOCTYPE HTML>\r\n<html>\r\n");
-	sprintf(html, "<head>\r\n<title>Index of %s</title>\r\n</head>\r\n", dirPath);
-	sprintf(html, "<body>\r\n<h1>Index of %s</h1>\r\n", dirPath);
-	sprintf(html, "<table>\r\n<tr><th valign=\"top\"><img src=\"/icons/blank.gif\""
+	sprintf(html, "%s<head>\r\n<title>Index of %s</title>\r\n</head>\r\n", html, dirPath);
+	sprintf(html, "%s<body>\r\n<h1>Index of %s</h1>\r\n", html, dirPath);
+	sprintf(html, "%s<table>\r\n<tr><th valign=\"top\"><img src=\"/icons/blank.gif\""
 	 "alt=\"[ICO]\"></th><th><a href=\"?C=N;O=D\">Name</a></th><th>"
 	 "<a href=\"?C=M;O=A\">Last modified</a></th><th><a href=\"?C=S;O=A\">Size</a>"
 	 "</th><th><a href=\"?C=D;O=A\">Description</a></th></tr>"
-	 "<tr><th colspan=\"5\"><hr></th></tr>");
+	 "<tr><th colspan=\"5\"><hr></th></tr>", html);
 	DIR * dir = opendir(dirPath);
 	if (dir == NULL) {
 		//perror("opendir");
@@ -376,13 +377,13 @@ char * dirListHTML(const char * dirPath) {
 
 	struct dirent * ent;
 	while ((ent = readdir(dir)) != NULL) {
-		sprintf(html, "<tr><td valign=\"top\"><img src=\"/icons/unknown.gif\" "
+		sprintf(html, "%s<tr><td valign=\"top\"><img src=\"/icons/unknown.gif\" "
 		"alt=\"[   ]\"></td><td><a href=\"%s\">%s</a>               </td>"
 		"<td align=\"right\">2014-11-10 17:53  </td><td align=\"right\">374 </td>"
-		"<td>&nbsp;</td></tr>", ent->d_name, ent->d_name);
+		"<td>&nbsp;</td></tr>", html, ent->d_name, ent->d_name);
 	}
-	sprintf(html, "<tr><th colspan=\"5\"><hr></th></tr>\r\n</table>");
-	sprintf(html, "<address>Cashburn-Server/1.0</address>\r\n</body></html>");
+	sprintf(html, "%s<tr><th colspan=\"5\"><hr></th></tr>\r\n</table>", html);
+	sprintf(html, "%s<address>Cashburn-Server/1.0</address>\r\n</body></html>", html);
 	closedir(dir);
 	return html;
 }
