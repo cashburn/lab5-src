@@ -337,6 +337,10 @@ char * setContentType(char * path) {
 		contentType = strdup("image/gif");
 	}
 
+	else if (!strcmp(extension, ".xbm")) {
+		contentType = strdup("image/x-xbitmap");
+	}
+
 	else
 		contentType = strdup("text/plain");
 
