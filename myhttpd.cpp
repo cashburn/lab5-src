@@ -6,13 +6,13 @@ const char * usage =
 "                                                               \n";
 
 const char * successHeader =
-"HTTP/1.0 200 OK\n"
-"Server: cashburn\n";
+"HTTP/1.0 200 OK\r\n"
+"Server: cashburn\r\n";
 
 const char * errorHeader =
-"HTTP/1.0 404 Not Found\n"
-"Content-Type: text/html\n"
-"Server: cashburn\n";
+"HTTP/1.0 404 Not Found\r\n"
+"Content-Type: text/html\r\n"
+"Server: cashburn\r\n\r\n";
 
 const char * errorPage = "<!DOCTYPE html><title>Error</title><p><b>Error</b></p>\n";
 
