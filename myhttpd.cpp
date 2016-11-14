@@ -30,6 +30,7 @@ const char * errorPage = "<!DOCTYPE html><title>Error</title><p><b>Error</b></p>
 #include <time.h>
 #include <signal.h>
 #include <pthread.h>
+#include <dirent.h>
 
 #define MAXPATH 1024
 #define MAXHEAD 4096
@@ -45,6 +46,10 @@ void processRequestThread(void * socket);
 void poolSlave(void * socket);
 //Content-Type helper function
 char * setContentType(char * path);
+
+char * dirListHTML(const char * dirPath);
+
+int isDirectory(const char * path);
 
 void sigChldHandler(int sig);
 
@@ -283,7 +288,13 @@ void processRequest(int fd) {
 	sprintf(header, "%sContent-Type: %s\n\n", successHeader, contentType);
 	write(fd, header, strlen(header));
 	free(contentType);
+
 	int c;
+	if (isDirectory(path)) {
+		char * html = dirListHTML(path);
+		write(fd, html, strlen(html));
+	}
+
 	if (fp) {
 		while ((c = getc(fp)) != EOF)
 			write(fd, &c, 1);
@@ -343,6 +354,42 @@ void poolSlave(void * masterSocket) {
 		shutdown((intptr_t) socket, 0);
 		close((intptr_t) socket);
 	}
+}
+
+char * dirListHTML(const char * dirPath) {
+	char * html = (char *) malloc(16384*sizeof(char));
+	sprintf(html, "<!DOCTYPE HTML>\r\n<html>\r\n");
+	sprintf(html, "<head>\r\n<title>Index of %s</title>\r\n</head>\r\n", dirPath);
+	sprintf(html, "<body>\r\n<h1>Index of %s</h1>\r\n", dirPath);
+	sprintf(html, "<table>\r\n<tr><th valign=\"top\"><img src=\"/icons/blank.gif\""
+	 "alt=\"[ICO]\"></th><th><a href=\"?C=N;O=D\">Name</a></th><th>"
+	 "<a href=\"?C=M;O=A\">Last modified</a></th><th><a href=\"?C=S;O=A\">Size</a>"
+	 "</th><th><a href=\"?C=D;O=A\">Description</a></th></tr>"
+	 "<tr><th colspan=\"5\"><hr></th></tr>");
+	DIR * dir = opendir(dirPath);
+	if (dir == NULL) {
+		//perror("opendir");
+		return NULL;
+	}
+
+	struct dirent * ent;
+	while ((ent = readdir(dir)) != NULL) {
+		sprintf(html, "<tr><td valign=\"top\"><img src=\"/icons/unknown.gif\" "
+		"alt=\"[   ]\"></td><td><a href=\"%s\">%s</a>               </td>"
+		"<td align=\"right\">2014-11-10 17:53  </td><td align=\"right\">374 </td>"
+		"<td>&nbsp;</td></tr>", ent->d_name, ent->d_name);
+	}
+	sprintf(html, "<tr><th colspan=\"5\"><hr></th></tr>\r\n</table>");
+	sprintf(html, "<address>Cashburn-Server/1.0</address>\r\n</body></html>");
+	closedir(dir);
+	return html;
+}
+
+int isDirectory(const char * path) {
+   struct stat statbuf;
+   if (stat(path, &statbuf) != 0)
+       return 0;
+   return S_ISDIR(statbuf.st_mode);
 }
 
 void sigChldHandler(int sig) {
