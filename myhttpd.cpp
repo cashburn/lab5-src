@@ -285,7 +285,7 @@ void processRequest(int fd) {
 	if (isDirectory(path)) {
 		sprintf(header, "%sContent-Type: %s\n\n", successHeader, "text/html");
 		write(fd, header, strlen(header));
-		char * html = dirListHTML(reqFile);
+		char * html = dirListHTML(path);
 		write(fd, html, strlen(html));
 	}
 	else {
