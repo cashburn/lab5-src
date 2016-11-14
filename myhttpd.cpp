@@ -47,7 +47,7 @@ void poolSlave(void * socket);
 //Content-Type helper function
 char * setContentType(char * path);
 
-char * dirListHTML(const char * dirPath);
+char * dirListHTML(const char * dirPath, const char * relPath);
 
 int isDirectory(const char * path);
 
@@ -285,7 +285,7 @@ void processRequest(int fd) {
 	if (isDirectory(path)) {
 		sprintf(header, "%sContent-Type: %s\n\n", successHeader, "text/html");
 		write(fd, header, strlen(header));
-		char * html = dirListHTML(path);
+		char * html = dirListHTML(path, reqFile);
 		write(fd, html, strlen(html));
 	}
 	else {
@@ -359,11 +359,11 @@ void poolSlave(void * masterSocket) {
 	}
 }
 
-char * dirListHTML(const char * dirPath) {
+char * dirListHTML(const char * dirPath, const char * relPath) {
 	char * html = (char *) malloc(16384*sizeof(char));
 	sprintf(html, "<!DOCTYPE HTML>\r\n<html>\r\n");
-	sprintf(html, "%s<head>\r\n<title>Index of %s</title>\r\n</head>\r\n", html, dirPath);
-	sprintf(html, "%s<body>\r\n<h1>Index of %s</h1>\r\n", html, dirPath);
+	sprintf(html, "%s<head>\r\n<title>Index of %s</title>\r\n</head>\r\n", html, relPath);
+	sprintf(html, "%s<body>\r\n<h1>Index of %s</h1>\r\n", html, relPath);
 	sprintf(html, "%s<table>\r\n<tr><th valign=\"top\"><img src=\"/icons/blank.gif\""
 	 "alt=\"[ICO]\"></th><th><a href=\"?C=N;O=D\">Name</a></th><th>"
 	 "<a href=\"?C=M;O=A\">Last modified</a></th><th><a href=\"?C=S;O=A\">Size</a>"
@@ -378,9 +378,9 @@ char * dirListHTML(const char * dirPath) {
 	struct dirent * ent;
 	while ((ent = readdir(dir)) != NULL) {
 		sprintf(html, "%s<tr><td valign=\"top\"><img src=\"/icons/unknown.gif\" "
-		"alt=\"[   ]\"></td><td><a href=\"/icons/%s\">%s</a>               </td>"
+		"alt=\"[   ]\"></td><td><a href=\"%s/%s\">%s</a>               </td>"
 		"<td align=\"right\">2014-11-10 17:53  </td><td align=\"right\">374 </td>"
-		"<td>&nbsp;</td></tr>", html, ent->d_name, ent->d_name);
+		"<td>&nbsp;</td></tr>", html, relPath, ent->d_name, ent->d_name);
 	}
 	sprintf(html, "%s<tr><th colspan=\"5\"><hr></th></tr>\r\n</table>", html);
 	sprintf(html, "%s<address>Cashburn-Server/1.0</address>\r\n</body></html>", html);
