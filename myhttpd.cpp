@@ -382,6 +382,12 @@ char * dirListHTML(char * dirPath) {
 			return NULL;
 		}
 	}
+	if (!*d1)
+		return NULL;
+	d1++;
+	if (!*d1)
+		return NULL;
+
 	char * relPath = d1;
 	char * html = (char *) malloc(16384*sizeof(char));
 	sprintf(html, "<!DOCTYPE HTML>\r\n<html>\r\n");
