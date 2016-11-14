@@ -378,16 +378,16 @@ char * dirListHTML(const char * dirPath, const char * relPath) {
 	sprintf(html, "<!DOCTYPE HTML>\r\n<html>\r\n");
 	sprintf(html, "%s<head>\r\n<title>Index of %s</title>\r\n</head>\r\n", html, relPath);
 	sprintf(html, "%s<body>\r\n<h1>Index of %s</h1>\r\n", html, relPath);
-	sprintf(html, "%s<table>\r\n<tr><th valign=\"top\"></th><th><a href=\"?C=N;O=D\">Name</a></th><th>"
-	 "<a href=\"?C=M;O=A\">Last modified</a></th><th><a href=\"?C=S;O=A\">Size</a>"
-	 "</th><th><a href=\"?C=D;O=A\">Description</a></th></tr>"
-	 "<tr><th colspan=\"5\"><hr></th></tr>", html);
+	sprintf(html, "%s<table>\r\n<tr><th valign=\"top\"></th><th><h3>Name</h3></th><th>"
+	 "<h3>Last modified</h3></th><th><h3>Size</h3>"
+	 "</th></tr>"
+	 "<tr><th colspan=\"4\"><hr></th></tr>", html);
 
 	sprintf(html, "%s<tr><td valign=\"top\">"
  	"<img src=\"/icons/menu.gif\" alt=\"[PARENTDIR]\"></td>", html);
 	sprintf(html, "%s<td><a href=\"..\">Parent Directory</a>               </td>"
 	"<td>&nbsp;</td><td align=\"right\"> - </td>"
-	"<td>&nbsp;</td></tr>", html);
+	"</tr>", html);
 	DIR * dir = opendir(dirPath);
 	if (dir == NULL) {
 		//perror("opendir");
