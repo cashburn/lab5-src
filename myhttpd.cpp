@@ -379,7 +379,7 @@ char * dirListHTML(const char * dirPath, const char * relPath) {
 	 "<tr><th colspan=\"5\"><hr></th></tr>", html);
 
 	sprintf(html, "%s<tr><td valign=\"top\">"
- 	"<img src=\"/icons/back.xbm\" alt=\"[PARENTDIR]\"></td>", html);
+ 	"<img src=\"/icons/menu.gif\" alt=\"[PARENTDIR]\"></td>", html);
 	sprintf(html, "%s<td><a href=\"../\">Parent Directory</a>               </td>"
 	"<td>&nbsp;</td><td align=\"right\"> - </td>"
 	"<td>&nbsp;</td></tr>", html);
