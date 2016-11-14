@@ -377,6 +377,12 @@ char * dirListHTML(const char * dirPath, const char * relPath) {
 	 "<a href=\"?C=M;O=A\">Last modified</a></th><th><a href=\"?C=S;O=A\">Size</a>"
 	 "</th><th><a href=\"?C=D;O=A\">Description</a></th></tr>"
 	 "<tr><th colspan=\"5\"><hr></th></tr>", html);
+
+	sprintf(html, "%s<tr><td valign=\"top\">"
+ 	"<img src=\"/icons/back.xbm\" alt=\"[PARENTDIR]\"></td>", html);
+	sprintf(html, "%s<td><a href=\"../\">Parent Directory</a>               </td>"
+	"<td>&nbsp;</td><td align=\"right\"> - </td>"
+	"<td>&nbsp;</td></tr>", html);
 	DIR * dir = opendir(dirPath);
 	if (dir == NULL) {
 		//perror("opendir");
@@ -385,6 +391,8 @@ char * dirListHTML(const char * dirPath, const char * relPath) {
 
 	struct dirent * ent;
 	while ((ent = readdir(dir)) != NULL) {
+		if (*(ent->d_name) == '.')
+			continue;
 		if (ent->d_type == DT_DIR) {
 			sprintf(html, "%s<tr><td valign=\"top\">"
 			"<img src=\"/icons/menu.gif\" alt=\"[   ]\"></td>", html);
