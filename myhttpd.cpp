@@ -395,9 +395,13 @@ char * dirListHTML(const char * dirPath, const char * relPath) {
 	}
 
 	struct dirent * ent;
+	char filePath[MAXPATH];
 	while ((ent = readdir(dir)) != NULL) {
 		if (*(ent->d_name) == '.')
 			continue;
+
+		strcpy(filePath, dirPath);
+		strcat(filePath, ent->d_name);
 
 		if (ent->d_type == DT_DIR) {
 			sprintf(html, "%s<tr><td valign=\"top\">"
