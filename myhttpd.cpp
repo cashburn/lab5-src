@@ -259,6 +259,11 @@ void processRequest(int fd) {
 		strcat(relPath, reqFile);
 	}
 
+	else if (!strncmp(reqFile, "/cgi-bin", 6)) {
+		strcpy(relPath, "http-root-dir");
+		strcat(relPath, reqFile);
+	}
+
 	char actualPath[MAXPATH];
 	path = realpath(relPath, actualPath);
 
