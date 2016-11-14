@@ -401,6 +401,7 @@ char * dirListHTML(const char * dirPath, const char * relPath) {
 			continue;
 
 		strcpy(filePath, dirPath);
+		strcat(filePath, "/");
 		strcat(filePath, ent->d_name);
 
 		if (ent->d_type == DT_DIR) {
