@@ -368,8 +368,9 @@ void poolSlave(void * masterSocket) {
 			exit( -1 );
 		}
 		processRequest((intptr_t) slaveSocket);
-		shutdown((intptr_t) socket, 0);
-		close((intptr_t) socket);
+
+		//shutdown((intptr_t) slaveSocket, 0);
+		close((intptr_t) slaveSocket);
 	}
 }
 
