@@ -411,7 +411,7 @@ char * dirListHTML(const char * dirPath, const char * relPath) {
 		stat(ent->d_name, &attrib);
 		sprintf(html, "%s<td><a href=\"%s/%s\">%s</a>               </td>"
 		"<td align=\"right\">%s  </td><td align=\"right\">%s </td>"
-		"<td>&nbsp;</td></tr>", html, relPath, ent->d_name, ent->d_name, ctime(&attrib.st_mtime), &attrib.st_size);
+		"<td>&nbsp;</td></tr>", html, relPath, ent->d_name, ent->d_name, ctime(&(&attrib)->st_mtime), (&attrib)->st_size);
 	}
 	sprintf(html, "%s<tr><th colspan=\"5\"><hr></th></tr>\r\n</table>", html);
 	sprintf(html, "%s<address>Cashburn-Server/1.0</address>\r\n</body></html>", html);
