@@ -373,8 +373,7 @@ char * dirListHTML(const char * dirPath, const char * relPath) {
 	sprintf(html, "<!DOCTYPE HTML>\r\n<html>\r\n");
 	sprintf(html, "%s<head>\r\n<title>Index of %s</title>\r\n</head>\r\n", html, relPath);
 	sprintf(html, "%s<body>\r\n<h1>Index of %s</h1>\r\n", html, relPath);
-	sprintf(html, "%s<table>\r\n<tr><th valign=\"top\"><img src=\"/icons/blank.gif\""
-	 "alt=\"[ICO]\"></th><th><a href=\"?C=N;O=D\">Name</a></th><th>"
+	sprintf(html, "%s<table>\r\n<tr><th valign=\"top\"></th><th><a href=\"?C=N;O=D\">Name</a></th><th>"
 	 "<a href=\"?C=M;O=A\">Last modified</a></th><th><a href=\"?C=S;O=A\">Size</a>"
 	 "</th><th><a href=\"?C=D;O=A\">Description</a></th></tr>"
 	 "<tr><th colspan=\"5\"><hr></th></tr>", html);
@@ -392,7 +391,7 @@ char * dirListHTML(const char * dirPath, const char * relPath) {
 		}
 		else {
 			sprintf(html, "%s<tr><td valign=\"top\">"
-			"<img src=\"/icons/index.xbm\" alt=\"[   ]\"></td>", html);
+			"<img src=\"/icons/index.gif\" alt=\"[   ]\"></td>", html);
 		}
 		sprintf(html, "%s<td><a href=\"%s/%s\">%s</a>               </td>"
 		"<td align=\"right\">2014-11-10 17:53  </td><td align=\"right\">374 </td>"
