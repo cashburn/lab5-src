@@ -415,7 +415,7 @@ char * dirListHTML(const char * dirPath, const char * relPath) {
 		struct stat attrib;
 		printf("Stat output:%d\n", stat(filePath, &attrib));
 		sprintf(html, "%s<td><a href=\"%s/%s\">%s</a>               </td>"
-		"<td align=\"right\">%s  </td><td align=\"right\">%s </td>"
+		"<td align=\"right\">%s  </td><td align=\"right\">%d </td>"
 		"<td>&nbsp;</td></tr>", html, relPath, ent->d_name, ent->d_name, ctime(&(&attrib)->st_mtime), (&attrib)->st_size);
 	}
 	sprintf(html, "%s<tr><th colspan=\"5\"><hr></th></tr>\r\n</table>", html);
