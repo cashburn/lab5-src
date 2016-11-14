@@ -249,7 +249,7 @@ void processRequest(int fd) {
 		strcat(relPath, "index.html");
 	}
 
-	if (strncmp(reqFile, "/icons", 6)) {
+	else if (!strncmp(reqFile, "/icons", 6)) {
 		strcpy(relPath, "http-root-dir");
 	}
 
