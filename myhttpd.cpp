@@ -47,7 +47,7 @@ void poolSlave(void * socket);
 //Content-Type helper function
 char * setContentType(char * path);
 
-char * dirListHTML(char * dirPath);
+char * dirListHTML(const char * dirPath, const char * relPath);
 
 int isDirectory(const char * path);
 
@@ -289,13 +289,13 @@ void processRequest(int fd) {
 	char header[MAXHEAD];
 	if (isDirectory(path)) {
 		sprintf(header, "%sContent-Type: %s\n\n", successHeader, "text/html");
-		char * html = dirListHTML(path);
+		write(fd, header, strlen(header));
+		char * html = dirListHTML(path, reqFile);
 		if (html == NULL) {
 			write(fd, errorHeader, strlen(errorHeader));
 			write(fd, errorPage, strlen(errorPage));
 			return;
 		}
-		write(fd, header, strlen(header));
 		write(fd, html, strlen(html));
 	}
 	else {
@@ -373,27 +373,7 @@ void poolSlave(void * masterSocket) {
 	}
 }
 
-char * dirListHTML(char * dirPath) {
-	char actualPath[MAXPATH];
-	char * basePath = realpath("http-root-dir/htdocs", actualPath);
-	char * b1 = basePath;
-	char * d1 = dirPath;
-	while (*b1 && *d1) {
-		if (*b1 == *d1) {
-			b1++;
-			d1++;
-		}
-		else {
-			return NULL;
-		}
-	}
-	if (!*d1)
-		return NULL;
-	d1++;
-	if (!*d1)
-		return NULL;
-
-	char * relPath = d1;
+char * dirListHTML(const char * dirPath, const char * relPath) {
 	char * html = (char *) malloc(16384*sizeof(char));
 	sprintf(html, "<!DOCTYPE HTML>\r\n<html>\r\n");
 	sprintf(html, "%s<head>\r\n<title>Index of %s</title>\r\n</head>\r\n", html, relPath);
