@@ -382,8 +382,15 @@ char * dirListHTML(const char * dirPath, const char * relPath) {
 
 	struct dirent * ent;
 	while ((ent = readdir(dir)) != NULL) {
-		sprintf(html, "%s<tr><td valign=\"top\"><img src=\"/icons/unknown.gif\" "
-		"alt=\"[   ]\"></td><td><a href=\"%s/%s\">%s</a>               </td>"
+		if (ent->d_type == DT_DIR) {
+			sprintf(html, "%s<tr><td valign=\"top\">"
+			"<img src=\"/icons/menu.gif\" alt=\"[   ]\"></td>", html);
+		}
+		else {
+			sprintf(html, "%s<tr><td valign=\"top\">"
+			"<img src=\"/icons/index.xbm\" alt=\"[   ]\"></td>", html);
+		}
+		sprintf(html, "%s<td><a href=\"%s/%s\">%s</a>               </td>"
 		"<td align=\"right\">2014-11-10 17:53  </td><td align=\"right\">374 </td>"
 		"<td>&nbsp;</td></tr>", html, relPath, ent->d_name, ent->d_name);
 	}
