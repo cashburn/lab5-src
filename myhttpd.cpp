@@ -251,6 +251,7 @@ void processRequest(int fd) {
 
 	else if (!strncmp(reqFile, "/icons", 6)) {
 		strcpy(relPath, "http-root-dir");
+		strcat(relPath, reqFile);
 	}
 
 	char actualPath[MAXPATH];
