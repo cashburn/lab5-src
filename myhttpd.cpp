@@ -375,7 +375,7 @@ void poolSlave(void * masterSocket) {
 
 char * dirListHTML(char * dirPath) {
 	char actualPath[MAXPATH];
-	char * basePath = realpath(dirPath, actualPath);
+	char * basePath = realpath("http-root-dir/htdocs", actualPath);
 	char * b1 = basePath;
 	char * d1 = dirPath;
 	while (*b1 && *d1) {
