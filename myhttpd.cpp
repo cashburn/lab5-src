@@ -14,7 +14,7 @@ const char * errorHeader =
 "Content-Type: text/html\n"
 "Server: cashburn\n";
 
-const char * errorPage = "<!DOCTYPE html><title>Error</title><p><b>Error</b></p>";
+const char * errorPage = "<!DOCTYPE html><title>Error</title><p><b>Error</b></p>\n";
 
 #include <sys/types.h>
 #include <sys/socket.h>
