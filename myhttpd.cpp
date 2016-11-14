@@ -398,6 +398,7 @@ char * dirListHTML(const char * dirPath, const char * relPath) {
 	while ((ent = readdir(dir)) != NULL) {
 		if (*(ent->d_name) == '.')
 			continue;
+
 		if (ent->d_type == DT_DIR) {
 			sprintf(html, "%s<tr><td valign=\"top\">"
 			"<img src=\"/icons/menu.gif\" alt=\"[   ]\"></td>", html);
@@ -406,9 +407,11 @@ char * dirListHTML(const char * dirPath, const char * relPath) {
 			sprintf(html, "%s<tr><td valign=\"top\">"
 			"<img src=\"/icons/index.gif\" alt=\"[   ]\"></td>", html);
 		}
+		struct stat attrib;
+		stat(ent->d_name, &attrib);
 		sprintf(html, "%s<td><a href=\"%s/%s\">%s</a>               </td>"
-		"<td align=\"right\">2014-11-10 17:53  </td><td align=\"right\">374 </td>"
-		"<td>&nbsp;</td></tr>", html, relPath, ent->d_name, ent->d_name);
+		"<td align=\"right\">%s  </td><td align=\"right\">%s </td>"
+		"<td>&nbsp;</td></tr>", html, relPath, ent->d_name, ent->d_name, ctime(&attrib.st_mtime), &attrib.st_size);
 	}
 	sprintf(html, "%s<tr><th colspan=\"5\"><hr></th></tr>\r\n</table>", html);
 	sprintf(html, "%s<address>Cashburn-Server/1.0</address>\r\n</body></html>", html);
